@@ -1,0 +1,48 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="row">
+  <h1 class="text-center">
+    <%= campground ? "Edit" : "New" %> Campground
+  </h1>
+    <div class="col-6 offset-3">
+      <form
+  method="POST"  
+  action="<%= campground ? `/campgrounds/${campground._id}?_method=PUT` : "/campgrounds/" %>">
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input class="form-control" type="text" id="title" name="campground[title]"
+        value="<%= campground ? campground.title : "" %>" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="location">Location</label>
+        <input class="form-control" type="text" id="location" name="campground[location]"
+        value="<%= campground ? campground.location : "" %>" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="image">Image URL</label>
+        <input class="form-control" type="text" id="image" name="campground[image]"
+        value="<%= campground ? campground.image : "" %>" />
+      </div>
+      <div class="mb-3">
+      <label class="form-label" for="price">Campground Price</label>
+      <div class="input-group">
+        <span class="input-group-text" id="price-label">$</span>
+        <input type="text" id="price" class="form-control" value="<%= campground ? campground.price : "" %>" placeholder="0.00" aria-label="price" aria-describedby="price-label" name="campground[price]"/>
+      </div>
+      </div>
+            <div class="mb-3">
+        <label class="form-label" for="description">Description</label>
+        <textarea class="form-control" id="description" name="campground[description]"><%= campground ? campground.description : "" %></textarea>
+      </div>
+
+      <div class="mb-3">
+            <button class="btn btn-success"><%= campground ? "Edit" : "New" %> Campground</button>
+      </div>
+    </form>
+      <a href="<%= campground ? `/campgrounds/${campground._id}` : "/campgrounds/"%>">Cancel</a>
+    </div>
+</div>
+
+  
+ 
+
