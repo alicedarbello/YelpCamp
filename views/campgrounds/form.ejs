@@ -7,32 +7,32 @@
     <div class="col-6 offset-3">
       <form
   method="POST"  
-  action="<%= campground ? `/campgrounds/${campground._id}?_method=PUT` : "/campgrounds/" %>">
-      <div class="mb-3">
+  action="<%= campground ? `/campgrounds/${campground._id}?_method=PUT` : "/campgrounds/" %>" novalidate class="validated-form">
+      <div class="mb-3"> 
         <label class="form-label" for="title">Title</label>
         <input class="form-control" type="text" id="title" name="campground[title]"
-        value="<%= campground ? campground.title : "" %>" />
+        value="<%= campground ? campground.title : "" %>" required/>
       </div>
       <div class="mb-3">
         <label class="form-label" for="location">Location</label>
         <input class="form-control" type="text" id="location" name="campground[location]"
-        value="<%= campground ? campground.location : "" %>" />
+        value="<%= campground ? campground.location : "" %>" required/>
       </div>
       <div class="mb-3">
         <label class="form-label" for="image">Image URL</label>
         <input class="form-control" type="text" id="image" name="campground[image]"
-        value="<%= campground ? campground.image : "" %>" />
+        value="<%= campground ? campground.image : "" %>" required/>
       </div>
       <div class="mb-3">
       <label class="form-label" for="price">Campground Price</label>
       <div class="input-group">
         <span class="input-group-text" id="price-label">$</span>
-        <input type="text" id="price" class="form-control" value="<%= campground ? campground.price : "" %>" placeholder="0.00" aria-label="price" aria-describedby="price-label" name="campground[price]"/>
+        <input type="text" id="price" class="form-control" value="<%= campground ? campground.price : "" %>" placeholder="0.00" aria-label="price" aria-describedby="price-label" name="campground[price]" required/>
       </div>
       </div>
             <div class="mb-3">
         <label class="form-label" for="description">Description</label>
-        <textarea class="form-control" id="description" name="campground[description]"><%= campground ? campground.description : "" %></textarea>
+        <textarea class="form-control" id="description" name="campground[description]" required><%= campground ? campground.description : "" %></textarea>
       </div>
 
       <div class="mb-3">
@@ -42,6 +42,7 @@
       <a href="<%= campground ? `/campgrounds/${campground._id}` : "/campgrounds/"%>">Cancel</a>
     </div>
 </div>
+
 
   
  
