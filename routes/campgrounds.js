@@ -1,85 +1,42 @@
 const express = require("express");
 const router = express.Router();
-const Campground = require("../models/campground");
 const {
   isLoggedIn,
   isAuthor,
   validateCampground,
 } = require("../middleware");
+const campgrounds = require("../controllers/campgrounds");
+const multer  = require('multer')
+const { storage } = require('../cloudinary/index')
+const upload = multer({ storage })
 
 // ROUTES /campgrounds
 
-router.get("/", async (req, res) => {
-  const campgrounds = await Campground.find({});
-  res.render("campgrounds/index", { campgrounds });
-});
+router
+  .route("/")
+  .get(campgrounds.index)
+  .post(isLoggedIn, upload.array('image'), validateCampground,campgrounds.createCampground);
+  
 
-router.get("/new", isLoggedIn, (req, res) => {
-  res.render("campgrounds/form", { campground: undefined });
-});
+router.get("/new", isLoggedIn, campgrounds.renderNewForm);
 
-router.get("/:id/edit", isLoggedIn, isAuthor, async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  if (!campground) {
-    req.flash("error", "Campground not found!");
-    return res.redirect("/campgrounds");
-  }
+router
+  .route("/:id")
+  .get(campgrounds.showCampground)
+  .put(
+    isLoggedIn,
+    isAuthor,
+    upload.array('image'),
+    validateCampground,
+    campgrounds.editCampground
+  )
+  .delete(isLoggedIn, isAuthor, campgrounds.deleteCampground);
 
-  res.render("campgrounds/form", { campground });
-});
-
-router.put(
-  "/:id",
+router.get(
+  "/:id/edit",
   isLoggedIn,
   isAuthor,
-  validateCampground,
-  async (req, res, next) => {
-    const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(
-      id,
-      { ...req.body.campground },
-      { new: true }
-    );
-    req.flash("success", "Successfully edit a campground!");
-    res.redirect(`/campgrounds/${campground._id}`);
-  }
+  campgrounds.renderEditForm
 );
-
-router.post(
-  "/",
-  isLoggedIn,
-  validateCampground,
-  async (req, res, next) => {
-    //req.body.campground devolve o objeto "Campground"
-    const campground = new Campground(req.body.campground);
-    campground.author = req.user._id; // adiciona o autor do campground
-    await campground.save();
-    req.flash("success", "Successfully created a new campground!");
-    res.redirect(`/campgrounds/${campground._id}`);
-  }
-);
-
-// show route for each Campground:
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  const campground = await Campground.findById(id)
-    // populate o Review e em cada Review
-    .populate({
-      // populate o autor de cada review
-      path: "reviews",
-      populate: {
-        path: "author",
-      },
-    })
-    .populate("author");
-  res.render("campgrounds/show", { campground });
-});
-
-router.delete("/:id", isLoggedIn, isAuthor, async (req, res) => {
-  const { id } = req.params;
-  await Campground.findByIdAndDelete(id);
-  req.flash("success", "Successfully remove a campground!");
-  res.redirect("/campgrounds");
-});
 
 module.exports = router;

@@ -19,11 +19,19 @@ const seedDB = async() => {
         const randomCities = Math.floor(Math.random() * 1000)
         const price = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({
-            author: '68791d862899104e31754d88',
+            author: '6879799bb131a9efed7237b0',
             location: `${cities[randomCities].city}, ${cities[randomCities].state}`,
             title: `${sample(descriptors)}, ${sample(places)}` ,
-            image: `https://picsum.photos/400?random=${Math.random()}`,
-            description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum dolorum asperiores quis voluptatem saepe ad vel dolorem quos dolores ipsa consequatur vero, recusandae mollitia cum esse placeat cupiditate impedit unde. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum dolorum asperiores quis voluptatem saepe ad vel dolorem quos dolores ipsa consequatur vero, recusandae mollitia cum esse placeat cupiditate impedit unde.',
+            images: [
+                {
+                url: 'https://res.cloudinary.com/dsvbf6yrb/image/upload/v1753375582/YelpCamp/csnvsrrw8vs60r8kaahl.webp',
+                filename: 'YelpCamp/csnvsrrw8vs60r8kaahl',
+                },
+                {
+                url: 'https://res.cloudinary.com/dsvbf6yrb/image/upload/v1753375583/YelpCamp/xa7ca3jiony7vwr01vhf.jpg',
+                filename: 'YelpCamp/xa7ca3jiony7vwr01vhf',
+                }
+            ],            description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum dolorum asperiores quis voluptatem saepe ad vel dolorem quos dolores ipsa consequatur vero, recusandae mollitia cum esse placeat cupiditate impedit unde. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum dolorum asperiores quis voluptatem saepe ad vel dolorem quos dolores ipsa consequatur vero, recusandae mollitia cum esse placeat cupiditate impedit unde.',
             price
         })
         
