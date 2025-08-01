@@ -2,7 +2,7 @@ if(process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'; // erro -fetch
 
 const express = require("express");
 const path = require("path");
@@ -15,7 +15,8 @@ const flash = require('connect-flash')
 const passport = require('passport');
 const LocalStrategy = require('passport-local')
 const User = require('./models/user');
-
+const sanitizeV5 = require('./utils/mongoSanitizeV5.js');
+const helmet = require('helmet');
 
 // REQUIRE ROUTES
 const userRoutes = require("./routes/users");
@@ -31,6 +32,8 @@ db.once("open", () => {
 });
 
 const app = express();
+ 
+app.set('query parser', 'extended');
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -39,13 +42,16 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")))
+app.use(sanitizeV5({ replaceWith: '_' }));
 
 const sessionConfig = {
+  name: '32131232', // Use a unique name for the session cookie
   secret: 'thishouldbeabettersecret',
   resave: false,
   saveUninitialized: true,
   cookie: { 
     httpOnly: true,
+    // secure: true, // Uncomment this line if using HTTPS 
 	  expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
 	  maxAge: 1000 * 60 * 60 * 24 * 7
   }
@@ -53,6 +59,52 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(helmet());
+
+app.use(helmet());
+
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+    "https://cdn.maptiler.com/"
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
+    "https://cdn.maptiler.com/",
+];
+const connectSrcUrls = [
+    "https://api.maptiler.com/"
+];
+const fontSrcUrls = [];
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/dsvbf6yrb/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://images.unsplash.com/",
+                "https://api.maptiler.com/"
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
 
 
 app.use(passport.initialize())
@@ -71,9 +123,9 @@ app.use((req, res, next) => {
 })
 
 // USE ROUTES
+app.use('/', userRoutes)
 app.use('/campgrounds', campgrounds)
 app.use('/campgrounds/:id/reviews', reviews)
-app.use('/', userRoutes)
 
 app.get("/", (req, res) => {
   res.render("home");
