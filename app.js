@@ -10,8 +10,9 @@ const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
-const session = require('express-session')
-const flash = require('connect-flash')
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local')
 const User = require('./models/user');
@@ -23,7 +24,10 @@ const userRoutes = require("./routes/users");
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
 
-mongoose.connect("mongodb://127.0.0.1:27017/yelp-camp");
+// const dbUrl= process.env.DB_URL
+const dbUrl= "mongodb://127.0.0.1:27017/yelp-camp"
+// mongoose.connect(dbUrl);
+mongoose.connect(dbUrl);
  
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -44,9 +48,22 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")))
 app.use(sanitizeV5({ replaceWith: '_' }));
 
-const sessionConfig = {
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60, // configuração para atualizar a sessão após 24 horas
+  crypto: {
+      secret: 'thisshouldbeabettersecret!'
+  }
+});
+
+store.on("error", function(e) {
+  console.log("SESSION STORE ERROR", e);
+});
+
+const sessionConfig = { 
+  store, // Use MongoStore to store sessions in MongoDB 
   name: '32131232', // Use a unique name for the session cookie
-  secret: 'thishouldbeabettersecret',
+  secret: 'thisshouldbeabettersecret!',
   resave: false,
   saveUninitialized: true,
   cookie: { 
@@ -59,10 +76,8 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 app.use(flash());
-app.use(helmet());
 
 app.use(helmet());
-
 
 const scriptSrcUrls = [
     "https://stackpath.bootstrapcdn.com/",
