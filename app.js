@@ -25,7 +25,7 @@ const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
 
 // const dbUrl= process.env.DB_URL
-const dbUrl = process.env.DB_URL
+const dbUrl = process.env.DB_URL 
 // mongoose.connect(dbUrl);
 mongoose.connect(dbUrl);
  
