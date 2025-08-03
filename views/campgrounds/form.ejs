@@ -55,9 +55,9 @@
         <% } %>
       </div>
       <div class="mb-3">
-            <button class="btn btn-success"><%= campground ? "Edit" : "New" %> Campground</button>
+          <button class="btn btn-success"><%= campground ? "Edit" : "New" %> Campground</button>
           </form>
-          <button class="btn btn-danger" href="<%= campground ? `/campgrounds/${campground._id}` : "/campgrounds/"%>">Cancel</button>
+          <a class="btn btn-danger" href="<%= campground ? `/campgrounds/${campground._id}` : "/campgrounds/"%>">Cancel</a>
         </div>
     </div>
 </div>
