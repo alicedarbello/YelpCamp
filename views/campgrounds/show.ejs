@@ -115,17 +115,19 @@
       <div class="mb-3">
         <label class="form-label" for="body">Review</label>
         <textarea
-          class="form-control"
+          class="form-control mb-3"
           name="review[body]"
           cols="30"
           rows="3"
           id="body"
           required
         ></textarea>
+      <%- include('../partials/reviewError')%>
       </div>
       <button class="btn btn-success">Submit</button>
     </form>
-    <% } %> <% for (let review of campground.reviews) { %>
+    <% } %> 
+    <% for (let review of campground.reviews) { %>
     <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title"><%= review.author.username %></h5>
@@ -135,7 +137,7 @@
         >
           Rated: <%= review.rating %> stars
         </p>
-
+        
         <p class="card-text">Review: <%= review.body %></p>
         <% if(currentUser && review.author.equals(currentUser._id)){
         %>

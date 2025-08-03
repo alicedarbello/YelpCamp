@@ -31,22 +31,31 @@ module.exports.isAuthor = async (req, res, next) => {
 }
 
 module.exports.validateCampground = (req, res, next) => {
-  const { error } = campgroundSchema.validate(req.body || {});
+  const { error } = campgroundSchema.validate(req.body, { abortEarly: false });
   if (error) {
-    //error.details é um objeto, com os detalhes do erro
-    //mapeamos error.details para devolver o erro exato
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
+    const errors = {};
+    error.details.forEach(detail => {
+      const key = detail.path.join('.'); // exemplo: campground.title
+      errors[key] = detail.message;
+    });
+
+    req.flash('errorMessages', errors);
+    req.flash('formData', req.body);
+    return res.redirect('/campgrounds/new');
+  }
+ else {
     next();
   }
 };
 
 module.exports.validateReview = (req, res, next) => {
+  const { id } = req.params;
   const { error } = reviewSchema.validate(req.body || {});
   if (error) {
     const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
+    req.flash('reviewError', msg);
+    return res.redirect(`/campgrounds/${id}`);
+    // throw new ExpressError(msg, 400);
   } else {
     next();
   }

@@ -2,32 +2,37 @@
 
 <div class="row">
     <div class="col-6 offset-3">
+<% const formValues = campground || formData.campground || {}; %>
       <h1 class="text-center">
     <%= campground ? "Edit" : "New" %> Campground
   </h1>
-      <form
+      <form id="campground-form"
   method="POST"  
   action="<%= campground ? `/campgrounds/${campground._id}?_method=PUT` : "/campgrounds/" %>" novalidate class="validated-form" enctype="multipart/form-data">
       <div class="mb-3"> 
         <label class="form-label" for="title">Title</label>
         <input class="form-control" type="text" id="title" name="campground[title]"
-        value="<%= campground ? campground.title : "" %>" required/>
+        value="<%= formValues.title || '' %>" required/>
+        <%- include('../partials/fieldError', { fieldName: 'campground.title' }) %>
       </div>
       <div class="mb-3">
         <label class="form-label" for="location">Location</label>
         <input class="form-control" type="text" id="location" name="campground[location]"
-        value="<%= campground ? campground.location : "" %>" required/>
+        value="<%= formValues.location || '' %>" required/>
+        <%- include('../partials/fieldError', { fieldName: 'campground.location' }) %>
       </div>
       <div class="mb-3">
       <label class="form-label" for="price">Campground Price</label>
       <div class="input-group">
         <span class="input-group-text" id="price-label">$</span>
-        <input type="text" id="price" class="form-control" value="<%= campground ? campground.price : "" %>" placeholder="0.00" aria-label="price" aria-describedby="price-label" name="campground[price]" required/>
+        <input type="text" id="price" class="form-control" value="<%= formValues.price || '' %>" placeholder="0.00" aria-label="price" aria-describedby="price-label" name="campground[price]" required/>
       </div>
+      <%- include('../partials/fieldError', { fieldName: 'campground.price' }) %>
       </div>
-            <div class="mb-3">
+        <div class="mb-3">
         <label class="form-label" for="description">Description</label>
-        <textarea class="form-control" id="description" name="campground[description]" required><%= campground ? campground.description : "" %></textarea>
+        <textarea class="form-control" id="description" name="campground[description]" required><%= formValues.description || '' %></textarea>
+        <%- include('../partials/fieldError', { fieldName: 'campground.description' }) %>
       </div>
             <div class="mb-3">
         <div class="input-group">
@@ -51,12 +56,11 @@
       </div>
       <div class="mb-3">
             <button class="btn btn-success"><%= campground ? "Edit" : "New" %> Campground</button>
-      </div>
-    </form>
-      <a href="<%= campground ? `/campgrounds/${campground._id}` : "/campgrounds/"%>">Cancel</a>
+          </form>
+          <button class="btn btn-danger" href="<%= campground ? `/campgrounds/${campground._id}` : "/campgrounds/"%>">Cancel</button>
+        </div>
     </div>
 </div>
-
 
   
  
