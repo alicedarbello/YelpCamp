@@ -133,10 +133,13 @@ passport.deserializeUser(User.deserializeUser());
 
 // Define middlewares para serem usados em todos os templates
 app.use((req, res, next) => {
-    res.locals.currentUser = req.user;
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-	next();
+  res.locals.currentUser = req.user;
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  res.locals.reviewError = req.flash('reviewError');
+  res.locals.errorMessages = req.flash('errorMessages')[0] || {};;
+  res.locals.formData = req.flash('formData')[0] || {};;
+  next();
 })
 
 // USE ROUTES
